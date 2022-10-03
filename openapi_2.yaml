@@ -1,0 +1,321 @@
+openapi: 3.0.3
+info:
+  title: Online Lessons
+  version: 1.0.0
+tags:
+  - name: Students
+    description: Students management
+  - name: Courses
+    description: Course management 
+paths:
+  /Courses:
+    get: 
+      tags:
+        - Courses
+      summary: Get all Courses
+      operationId: getCourses
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+        '400':
+          description: Bad Request  
+        '401':
+          description: No Permission          
+      security:
+        - admin_auth:
+          - admin
+    post:
+      tags:
+        - Courses
+      summary: Add an Course
+      operationId: createCourse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        '400':
+          description: Bad Request  
+        '401':
+          description: No Permission
+      security:
+        - admin_auth:
+          - admin
+  /Courses/{CourseId}:
+    parameters:
+      - name: CourseId
+        in: path
+        description: The id of the Course
+        required: true
+        schema:
+          type: integer  
+    get:
+      tags:
+        - Courses
+      summary: Get a Course
+      operationId: getCourse
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - Courses
+      summary: Edit Course data
+      operationId: editCourse
+      parameters:
+        - name: CourseName
+          in: query
+          description: Course name
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        '400':
+          description: Bad Request
+        '401':
+          description: No Permission
+      security:
+        - admin_auth:
+          - admin
+    
+    delete:
+      tags:
+        - Courses
+      summary: Delete a Course
+      operationId: deleteCourse
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+        '401':
+          description: No Permission
+      security:
+        - admin_auth:
+          - admin
+  
+  /Students:
+    get:
+      tags:
+        - Students
+      summary: Get all Students
+      operationId: getStudents
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        '400':
+          description: Bad Request 
+        '401':
+          description: No Permission
+      security:
+        - admin_auth:
+          - student          
+    post:
+      tags:
+        - Students
+      summary: Create a Student
+      operationId: createStudent
+      parameters:
+        - name: Studentname
+          in: query
+          description: The Student name
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          description: Bad Request 
+        '401':
+          description: No Permission
+      security:
+        - admin_auth:
+          - admin
+  
+  /Students/{StudentId}:
+    parameters:
+      - name: StudentId
+        in: path
+        description: The id of the Student
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - Students
+      summary: Get a Student
+      operationId: getStudent
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '404':
+          description: Not Found
+    put: 
+      tags:
+        - Students
+      summary: Edit Student data
+      operationId: editStudent
+      parameters:
+        - name: username
+          in: query
+          description: Username
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          description: Bad Request
+        '401':
+          description: No Permission
+      security:
+        - admin_auth:
+          - admin
+    delete: 
+        tags:
+          - Students
+        summary: Delete a Student
+        operationId: deleteStudent
+        responses:
+          '204':
+            description: No Content
+          '404':
+            description: Not Found
+          '401':
+            description: No Permission
+        security:
+          - admin_auth:
+              - admin
+    post: 
+      tags:
+        - Students
+      summary: Add a Student to a Course
+      operationId: addStudentToCourse
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                id: 
+                  type: integer
+                  example: 10
+        required: true
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        '400':
+          description: Bad Request
+        '401':
+          description: No Permission
+      security:
+        - admin_auth:
+          - admin        
+          
+          
+  /Courses/join/{CourseId}:
+    parameters:
+      - name: CourseId
+        in: path
+        description: The id of the Course
+        required: true
+        schema:
+          type: integer
+    get: 
+      tags:
+        - Courses
+      summary: send a request to join a course
+      operationId: sendRequest
+      responses:
+        '200':
+          description: Successful
+        '400':
+          description: Bad Request
+        '401':
+          description: No Permission
+      security:
+        - admin_auth:
+          - admin
+  
+components:
+  schemas:
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          example: da3wdf3f
+        title:
+          type: string
+          example: Programming
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 13
+        Studentname:
+          type: string
+          example: Вадим Чорний
+        Course:
+          type: string
+          example: Programming
+  securitySchemes:            
+    admin_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://vns.lpnu.ua/
+          scopes:
+            admin: All rights
+            student: getStudents
