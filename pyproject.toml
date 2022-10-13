@@ -5,7 +5,10 @@ description = ""
 authors = ["th3san4ar <thesan4ar@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.10.7"
+sqlalchemy = "^1.4.41"
+mysqlclient = "^2.1.1"
+alembic = "^1.8.1"
 
 [tool.poetry.dev-dependencies]
 Flask = "^1.1.0"
