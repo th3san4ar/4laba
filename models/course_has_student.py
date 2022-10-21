@@ -1,9 +1,9 @@
 from . import Base
 from sqlalchemy import Table, Column, Integer, ForeignKey
 
-course_has_user = Table(
-    'course_has_user',
+course_has_student_table = Table(
+    'course_has_student',
     Base.metadata,
-    Column('user_id', Integer, ForeignKey('user.id'), primary_key = True), 
+    Column('student_id', Integer, ForeignKey('student.id'), primary_key = True), 
     Column('course_id', Integer, ForeignKey('course.id'), primary_key = True)
 )

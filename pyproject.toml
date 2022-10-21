@@ -1,18 +1,18 @@
 [tool.poetry]
-name = "laba4"
+name = "lab 6"
 version = "0.1.0"
 description = ""
-authors = ["th3san4ar <thesan4ar@gmail.com>"]
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10.7"
-sqlalchemy = "^1.4.41"
+python = "^3.10"
+Flask = "^2.2.2"
+SQLAlchemy = "^1.4.42"
 mysqlclient = "^2.1.1"
 alembic = "^1.8.1"
 
-[tool.poetry.dev-dependencies]
-Flask = "^1.1.0"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

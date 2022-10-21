@@ -7,6 +7,7 @@ tags:
     description: Students management
   - name: Courses
     description: Course management 
+  - name: JoinRequest
 paths:
   /Courses:
     get: 
@@ -28,8 +29,8 @@ paths:
         '401':
           description: No Permission          
       security:
-        - admin_auth:
-          - admin
+        - teacher_auth:
+          - teacher
     post:
       tags:
         - Courses
@@ -53,8 +54,8 @@ paths:
         '401':
           description: No Permission
       security:
-        - admin_auth:
-          - admin
+        - teacher_auth:
+          - teacher
   /Courses/{CourseId}:
     parameters:
       - name: CourseId
@@ -77,18 +78,14 @@ paths:
                 $ref: '#/components/schemas/Course'
         '404':
           description: Not Found
+      security:
+        - teacher_auth:
+          - teacher
     put:
       tags:
         - Courses
       summary: Edit Course data
       operationId: editCourse
-      parameters:
-        - name: CourseName
-          in: query
-          description: Course name
-          required: false
-          schema:
-            type: string
       responses:
         '200':
           description: Successful
@@ -101,9 +98,8 @@ paths:
         '401':
           description: No Permission
       security:
-        - admin_auth:
-          - admin
-    
+        - teacher_auth:
+          - teacher
     delete:
       tags:
         - Courses
@@ -117,15 +113,76 @@ paths:
         '401':
           description: No Permission
       security:
-        - admin_auth:
-          - admin
+        - teacher_auth:
+          - teacher
+  /Courses/addStudent/{CourseId}:
+    post: 
+      parameters:
+      - name: CourseId
+        in: path
+        description: The id of the Course
+        required: true
+        schema:
+          type: integer
+      - name: StudentId
+        in: query
+        description: Name of pet that needs to be updated
+        required: true
+        schema:
+          type: integer
+      tags:
+        - Courses
+      summary: Add a Student to a Course
+      operationId: addStudentToCourse
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        '400':
+          description: Bad Request
+        '401':
+          description: No Permission
+      security:
+        - teacher_auth:
+          - teacher 
+  /Courses/{courseId}:
+    get:
+      tags:
+       - Students
+      summary: Get all Students on Course
+      operationId: getStudents
+      parameters:
+        - name: courseId
+          in: path
+          description: ID of Course 
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'          
+        '400':
+          description: Invalid ID supplied
+      security:
+        - teacher_auth:
+          - teacher
   
   /Students:
     get:
       tags:
         - Students
       summary: Get all Students
-      operationId: getStudents
+      operationId: getAllStudents
       responses:
         '200':
           description: OK
@@ -140,20 +197,19 @@ paths:
         '401':
           description: No Permission
       security:
-        - admin_auth:
-          - student          
+        - teacher_auth:
+          - teacher          
     post:
       tags:
         - Students
       summary: Create a Student
       operationId: createStudent
-      parameters:
-        - name: Studentname
-          in: query
-          description: The Student name
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
       responses:
         '201':
           description: Created
@@ -166,9 +222,8 @@ paths:
         '401':
           description: No Permission
       security:
-        - admin_auth:
-          - admin
-  
+        - teacher_auth:
+          - teacher
   /Students/{StudentId}:
     parameters:
       - name: StudentId
@@ -191,18 +246,20 @@ paths:
                 $ref: '#/components/schemas/Student'
         '404':
           description: Not Found
+      security:
+        - teacher_auth:
+          - teacher
     put: 
       tags:
         - Students
       summary: Edit Student data
       operationId: editStudent
-      parameters:
-        - name: username
-          in: query
-          description: Username
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
       responses:
         '200':
           description: OK
@@ -215,8 +272,8 @@ paths:
         '401':
           description: No Permission
       security:
-        - admin_auth:
-          - admin
+        - teacher_auth:
+          - teacher
     delete: 
         tags:
           - Students
@@ -230,39 +287,8 @@ paths:
           '401':
             description: No Permission
         security:
-          - admin_auth:
-              - admin
-    post: 
-      tags:
-        - Students
-      summary: Add a Student to a Course
-      operationId: addStudentToCourse
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: 
-                id: 
-                  type: integer
-                  example: 10
-        required: true
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Course'
-        '400':
-          description: Bad Request
-        '401':
-          description: No Permission
-      security:
-        - admin_auth:
-          - admin        
-          
-          
+          - teacher_auth:
+            - teacher
   /Courses/join/{CourseId}:
     parameters:
       - name: CourseId
@@ -284,38 +310,113 @@ paths:
         '401':
           description: No Permission
       security:
-        - admin_auth:
-          - admin
-  
+        - student_auth:
+          - student
+  /JoinRequest/accept/{requestId}:
+    parameters:
+      - name: requestId
+        in: path
+        description: The id of the request
+        required: true
+        schema:
+          type: integer
+    put:
+      tags:
+        - JoinRequest
+      operationId: acceptRequest
+      requestBody:
+        description: Accept student to course
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinRequest'
+      responses:
+        '200':
+          description: Successful
+        '401':
+          description: No Permission
+        '404':
+          description: Not found
+      security:
+        - teacher_auth:
+          - teacher
 components:
   schemas:
+    
     Course:
       type: object
       properties:
-        id:
-          type: string
-          example: da3wdf3f
-        title:
+        name:
           type: string
           example: Programming
+        credits:
+          type: integer
+          example: 10
+        url:
+          type: string
+          example: example.com
+        teacher_id:
+          type: integer
+          example: 15
     Student:
       type: object
       properties:
-        id:
+        first_name:
+          type: string
+          example: John
+        second_name:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: test@example.com
+        password:
+          type: string
+          example: password1234
+    Teacher:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: John
+        second_name:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: test@example.com
+        password:
+          type: string
+          example: password1234
+    JoinRequest:
+      type: object
+      properties:
+        status:
+          type: string 
+          enum:
+           - accepted
+           - denied
+           - unprocessed
+        student_id:
           type: integer
-          example: 13
-        Studentname:
-          type: string
-          example: Вадим Чорний
-        Course:
-          type: string
-          example: Programming
+          example: 10
+        course_id:
+          type: integer
+          example: 15
   securitySchemes:            
-    admin_auth:
+    teacher_auth:
       type: oauth2
       flows:
         implicit:
           authorizationUrl: https://vns.lpnu.ua/
           scopes:
-            admin: All rights
-            student: getStudents
+            teacher: Teacher rights
+    student_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://vns.lpnu.ua/students/
+          scopes:
+            student: Student rights
+      
+    

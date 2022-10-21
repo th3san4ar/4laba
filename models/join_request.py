@@ -7,5 +7,5 @@ class JoinRequest(Base):
     id = Column(Integer, primary_key = True)
     status = Column(Enum('accepted', 'denied', 'unprocessed'), nullable = False)
     create_time = Column(DateTime, default = func.now(), nullable = False)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    course_id = Column(Integer, ForeignKey('course.id'))
+    student_id = Column(Integer, ForeignKey('student.id'), nullable = False)
+    course_id = Column(Integer, ForeignKey('course.id'), nullable = False)
